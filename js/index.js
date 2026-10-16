@@ -651,7 +651,7 @@ const SOURCE_OPTIONS = [
     { value: "netease", label: "网易云音乐" },
     { value: "kuwo", label: "酷我音乐" },
     { value: "joox", label: "JOOX音乐" },
-    { value: "bilibili", label: "哔哩哔哩" }
+    { value: "bilibili", label: "哔哩哔哩" }, { value: "kugou", label: "酷狗音乐" }, { value: "migu", label: "咪咕音乐" }
 ];
 
 function normalizeSource(value) {
@@ -894,17 +894,17 @@ const API = {
 
     getSongUrl: (song, quality = "320") => {
         const signature = API.generateSignature();
-        return `${API.baseUrl}?types=url&id=${song.id}&source=${song.source || "netease"}&br=${quality}&s=${signature}`;
+        const fallbackName = encodeURIComponent(song.name || ""); const fallbackArtist = encodeURIComponent(Array.isArray(song.artist) ? song.artist.join(", ") : (song.artist || "")); return `${API.baseUrl}?types=url&id=${song.id}&source=${song.source || "netease"}&br=${quality}&s=${signature}&fallbackName=${fallbackName}&fallbackArtist=${fallbackArtist}`;
     },
 
     getLyric: (song) => {
         const signature = API.generateSignature();
-        return `${API.baseUrl}?types=lyric&id=${song.lyric_id || song.id}&source=${song.source || "netease"}&s=${signature}`;
+        return `${API.baseUrl}?types=lyric&id=${encodeURIComponent(song.lyric_id || song.id)}&source=${song.source || "netease"}&s=${signature}`;
     },
 
     getPicUrl: (song) => {
         const signature = API.generateSignature();
-        return `${API.baseUrl}?types=pic&id=${song.pic_id}&source=${song.source || "netease"}&size=300&s=${signature}`;
+        return `${API.baseUrl}?types=pic&id=${encodeURIComponent(song.pic_id || "")}&source=${song.source || "netease"}&size=300&s=${signature}`;
     }
 };
 
@@ -5990,7 +5990,7 @@ function pickRandomExploreGenre() {
     return genres[index];
 }
 
-const EXPLORE_RADAR_SOURCES = ["netease", "kuwo"];
+const EXPLORE_RADAR_SOURCES = ["netease", "kuwo", "kugou", "migu"];
 
 function pickRandomExploreSource() {
     if (!Array.isArray(EXPLORE_RADAR_SOURCES) || EXPLORE_RADAR_SOURCES.length === 0) {
